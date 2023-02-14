@@ -2,7 +2,9 @@
 
 This is part of the Udacity ML Devops Nanodegree (Project 1).
 
-TODO: Add more details about the module
+The test cases directly invoke all public methods from the classes
+and check the results against expected values. Indirectly, all private methods
+are also tested, as they are invoked by the public methods.
 """
 
 # * Author  : Thomas Glanzer
@@ -12,6 +14,7 @@ TODO: Add more details about the module
 
 import glob
 import logging
+import os
 import shutil
 
 import pandas as pd
@@ -48,7 +51,7 @@ def fixture_init_class() -> ChurnLibrary:
 
 @pytest.fixture(name='raw_data')
 def fixture_import_data(cls: ChurnLibrary) -> pd.DataFrame:
-    """Import raw data from file."""
+    """Import raw test data from file."""
     try:
         raw_data = cls.import_data(constants.DEFAULT_INPUT_FILE)
     except Exception as err:
@@ -70,7 +73,7 @@ def fixture_preprocess_data(cls: ChurnLibrary,
 @pytest.fixture(name='train_test_data')
 def fixture_feature_engineering(
         cls: ChurnLibrary, data: pd.DataFrame) -> tuple:
-    """Perform feature engineering."""
+    """Perform feature engineering and return a train/test data split."""
     try:
         train_test_data = cls.perform_feature_engineering(
             data, target=constants.TARGET, feature_cols=constants.FEATURE_COLS,
@@ -110,7 +113,19 @@ def test_import_data(raw_data: pd.DataFrame):
 def test_eda(cls: ChurnLibrary, data: pd.DataFrame) -> None:
     """Test the perform_eda function."""
     try:
+        eda_path = f'{cls.image_path}{os.sep}eda{os.sep}'
+        # Identify features columns to get nr of expected plots
+        nr_features = len(data.select_dtypes(
+            include=['object', 'category', 'bool', 'int', 'float'])
+            .columns.tolist())
         cls.perform_eda(data, constants.TARGET)
+        # Check Correlation Matrix image was created
+        assert len(
+            glob.glob(eda_path + '*Correlation_Matrix.png')) >= 1
+        # Check one png was created per feature (in addition to CorrMatrix)
+        assert len(
+            glob.glob(eda_path + '*.png')) > nr_features
+
         logging.info("Testing perform_eda: SUCCESS - EDA performed")
     except Exception as err:
         logging.error("Testing perform_eda: FAILED - EDA not performed")
@@ -121,7 +136,7 @@ def test_encoder_helper(cls: ChurnLibrary, data: pd.DataFrame) -> None:
     """Test the encoder_helper function."""
     try:
         data = cls.encoder_helper(data, target=constants.TARGET)
-        # Assert that there are no categorical columns left
+        # Assert that there are no categorical columns left after encoding
         assert len(data.select_dtypes(
             include=[
                 'object', 'category', 'bool']).columns) == 0
@@ -165,7 +180,7 @@ def test_train_models(cls: ChurnLibrary, train_test_data: tuple) -> None:
         assert all(key in cls.results_dict.keys()
                    for key in ['RandomForest', 'LogisticRegression'])
         # Assert that at least two models were stored in the model folder
-        assert len(glob.glob(cls.model_path + '/*.pkl')) >= 2
+        assert len(glob.glob(cls.model_path + f'{os.sep}*.pkl')) >= 2
 
         logging.info("""Testing train_models: SUCCESS -
                         Models trained and stored.""")
@@ -175,5 +190,4 @@ def test_train_models(cls: ChurnLibrary, train_test_data: tuple) -> None:
         raise err
 
 
-# TODO check test coverage
-# TODO check logging
+# %%

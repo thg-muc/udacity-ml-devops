@@ -77,9 +77,9 @@ class GenericEdaLibrary:
         data : pandas dataframe
             The input csv file as a pandas dataframe.
         """
+        logging.debug('Importing data from file: %s', input_file)
         try:
             data = pd.read_csv(input_file, index_col=index_col)
-            logging.info('File loaded with shape %s', data.shape)
         except FileNotFoundError:
             logging.error('File not found, please check the path.')
             raise
@@ -108,11 +108,14 @@ class GenericEdaLibrary:
         # Determine categorical and quantitative columns
         cat_columns = data.select_dtypes(
             include=['object', 'category', 'bool']).columns.tolist()
+        logging.debug('Categorical columns: %s', cat_columns)
         quant_columns = data.select_dtypes(
             include=['int', 'float']).columns.tolist()
+        logging.debug('Quantitative columns: %s', quant_columns)
         # other columns are columns not in the above lists
         other_columns = [col for col in data.columns
                          if col not in cat_columns + quant_columns]
+        logging.debug('Other columns: %s', other_columns)
 
         return cat_columns, quant_columns, other_columns
 
@@ -135,21 +138,13 @@ class GenericEdaLibrary:
         -------
         None
         """
-        logging.info('Starting EDA...')
-        # Show DF head
-        logging.info('EDA - Data Head...\n %s', data.head())
-        # Generate describe statistics with pandas
-        logging.info('EDA - Describe...\n %s', data.describe())
-        # Generate isnull statistics with pandas
-        logging.info('EDA - isnull sum...\n %s', data.isnull().sum())
-
         # Determine column types
         cat_columns, quant_columns, _ = self._get_cols_per_type(data)
 
         # Set seaborn plot style
         with sns.axes_style(self.plot_style):
             # Generate hist plots figures for each column
-            logging.info('EDA - Categorical Histograms...')
+            logging.debug('EDA - Plotting Categorical Histograms...')
             for col in (cat_columns + quant_columns):
                 # Determine number of bins and set defaults
                 bins = min(nr_bins, data[col].nunique())
@@ -195,7 +190,7 @@ class GenericEdaLibrary:
                 plt.close('all')
 
         # Generate correlation matrix and plot
-        logging.info('EDA - Correlation Matrix...')
+        logging.debug('EDA - Plotting Correlation Matrix...')
         corr = data[quant_columns].corr()
         plt.figure(figsize=(20, 10))
         sns.heatmap(data=round(corr, 2), annot=True, cmap='Dark2_r',
@@ -227,13 +222,16 @@ class GenericEdaLibrary:
         -------
         None
         """
+        # Determine the save location
+        save_location = os.path.join(path, plot_name)
+        logging.debug('Saving plot to: %s', save_location)
         # Make sure the given output path exists
         os.makedirs(path, exist_ok=True)
         # Use default args, but update with provided params
         plot_kwargs = {'bbox_inches': 'tight'}
         plot_kwargs.update(**kwargs)
         # Save the figure
-        figure.savefig(os.path.join(path, plot_name), **plot_kwargs)
+        figure.savefig(save_location, **plot_kwargs)
 
     def perform_feature_engineering(
             self, data: pd.DataFrame, target: str,
@@ -260,6 +258,7 @@ class GenericEdaLibrary:
             Tuple containing the training and test data and target values.
             Expected order: (data_train, data_test, y_train, y_test)
         """
+        logging.debug('Performing feature engineering...')
         # Encode categorical columns into new columns with target proportions
         data = self.encoder_helper(data=data, target=target)
 
@@ -294,6 +293,7 @@ class GenericEdaLibrary:
         """
         # Determine categorical and quantitative columns
         cat_cols, _, _ = self._get_cols_per_type(data)
+        logging.debug('Encoding categorical columns: %s', cat_cols)
         # Iterate over the categorical columns
         for cat in cat_cols:
             # Get the target proportion for each category
@@ -332,6 +332,7 @@ class GenericEdaLibrary:
         -------
         None
         """
+        logging.debug('Training models...')
         # Unpack the data
         data_train, data_test, y_train, y_test = train_test_data
         # Define the baseline models
@@ -401,6 +402,7 @@ class GenericEdaLibrary:
         -------
         None
         """
+        logging.debug('Storing models to: %s', self.model_path)
         # Store the models to disk
         for model_name, model_results in results_dict.items():
             model = model_results['model']
@@ -421,6 +423,7 @@ class GenericEdaLibrary:
         -------
         None
         """
+        logging.debug('Creating performance curve plots...')
         # Iterate over all different performance plots
         for plot_name, Display in [
                 ('ROC_AUC', RocCurveDisplay),
@@ -466,6 +469,7 @@ class GenericEdaLibrary:
         -------
         None
         """
+        logging.debug('Creating classification report...')
         # Iterate over all different models (results_dict)
         for model_name, model_results in results_dict.items():
             y_test = model_results['y_test']
@@ -506,6 +510,7 @@ class GenericEdaLibrary:
         -------
         None
         """
+        logging.debug('Creating feature importances plots...')
         # Iterate over models for Feature Importances plot
         for model_name, model_results in results_dict.items():
 
@@ -514,8 +519,9 @@ class GenericEdaLibrary:
             try:
                 importances = model.feature_importances_
             except AttributeError:
-                logging.info(
-                    '%s does not offer feature importances.', model_name)
+                logging.debug(
+                    '%s does not offer feature importances, skipping...',
+                    model_name)
                 continue
 
             # ... Sort feature importances in descending order
@@ -539,5 +545,3 @@ class GenericEdaLibrary:
 
 
 # %%
-
-# TODO check logging consistency with other modules

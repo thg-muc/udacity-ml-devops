@@ -11,10 +11,9 @@ This is part of the Udacity ML Devops Nanodegree (Project 1).
 import os
 
 #######################################
-# Basic Configuration
+# Basic Configuration for churn_library
 
 DEFAULT_INPUT_FILE = os.path.join('data', 'bank_data.csv')
-
 DEFAULT_LOG_FILE = os.path.join('logs', 'churn_library.log')
 DEFAULT_LOG_LEVEL = 'INFO'
 
@@ -53,11 +52,11 @@ TRAIN_TEST_SPLIT_PARAMS = dict(
 
 # Define the RF Grid Search
 RF_GRID_SEARCH_PARAMS = dict(
-    #n_estimators=[200, 500],
-    #criterion=['gini', 'entropy'],
-    # max_features=[None, 'sqrt'],    # sqrt and auto are the same
-    #max_depth=[5, 8, 13, 20, None],
-    #min_samples_leaf=[1, 2, 3],
+    n_estimators=[200, 500],
+    criterion=['gini', 'entropy'],
+    max_features=[None, 'sqrt'],    # sqrt and auto are the same
+    max_depth=[5, 8, 13, 20, None],
+    min_samples_leaf=[1, 2, 3],
     random_state=[42],
     n_jobs=[8],
 )
@@ -66,15 +65,15 @@ RF_GRID_SEARCH_PARAMS = dict(
 LR_GRID_SEARCH_PARAMS = [
     dict(
         solver=['liblinear'],
-        #penalty=['l1', 'l2'],
-        #C=[0.1, 1, 10],
+        penalty=['l1', 'l2'],
+        C=[0.1, 1, 10],
         max_iter=[3000],
         random_state=[42],
     ),
     dict(
         solver=['lbfgs'],
         penalty=['l2'],
-        #C=[0.1, 1, 10],
+        C=[0.1, 1, 10],
         max_iter=[3000],
         random_state=[42],
         n_jobs=[8],
@@ -86,5 +85,3 @@ GRID_DICTS = dict(
     rfc=RF_GRID_SEARCH_PARAMS,
     lrc=LR_GRID_SEARCH_PARAMS
 )
-
-# TODO uncomment

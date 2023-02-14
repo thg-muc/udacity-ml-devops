@@ -47,7 +47,7 @@ class ChurnLibrary(GenericEdaLibrary):
         data.loc[data['Attrition_Flag'] ==
                  'Attrited Customer', 'Churn'] = 1
         # ... drop the old column
-        data = data.drop('Attrition_Flag', axis=1, errors='ignore')
+        data = data.drop('Attrition_Flag', axis=1)
         # ... define target
         return data
 
@@ -62,29 +62,30 @@ class ChurnLibrary(GenericEdaLibrary):
             level=constants.DEFAULT_LOG_LEVEL, filemode='w',
             format='[%(asctime)s] - %(name)s - %(levelname)s - %(message)s',
             datefmt='%Y-%m-%d %H:%M:%S')
-        logging.debug('Logging initialized...')
+        logging.info('Initialized customer churn workflow...')
 
         # Load data
-        logging.info(
-            'Loading data from file: %s',
-            constants.DEFAULT_INPUT_FILE)
         data = self.import_data(constants.DEFAULT_INPUT_FILE)
         # Make use case specific changes to the data
         data = self.add_customer_churn(data)
 
-        # Invoke EDA: A combination of univariate and bivariate analysis
+        # Perform EDA (statistics)
+        # ... show DF head
+        logging.info('EDA - Data Head...\n %s', data.head())
+        # ... generate describe statistics with pandas
+        logging.info('EDA - Describe...\n %s', data.describe())
+        # ... generate isnull statistics with pandas
+        logging.info('EDA - isnull sum...\n %s', data.isnull().sum())
+        # EDA Plots: A combination of univariate and bivariate analysis
         # ... as well as a Correlation Matrix and stats written to logfile
-        logging.info('Performing EDA...')
         self.perform_eda(data, target=constants.TARGET)
 
         # Encode columns and get train test split from feature engineering
-        logging.info('Performing Feature Engineering...')
         train_test_data = self.perform_feature_engineering(
             data, target=constants.TARGET, feature_cols=constants.FEATURE_COLS,
             **constants.TRAIN_TEST_SPLIT_PARAMS)
 
         # Train and store models, generate plots and feature importances
-        logging.info('Training Models...')
         self.train_models(train_test_data, grid_dicts=constants.GRID_DICTS)
 
         # Give feedback that processing is done
@@ -93,5 +94,3 @@ class ChurnLibrary(GenericEdaLibrary):
 
 if __name__ == '__main__':
     ChurnLibrary().run_workflow()
-
-# TODO check logging consistency with other modules
