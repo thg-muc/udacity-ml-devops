@@ -52,10 +52,9 @@ TRAIN_TEST_SPLIT_PARAMS = dict(
 
 # Define the RF Grid Search
 RF_GRID_SEARCH_PARAMS = dict(
-    n_estimators=[200, 500],
     criterion=['gini', 'entropy'],
     max_features=[None, 'sqrt'],    # sqrt and auto are the same
-    max_depth=[5, 8, 13, 20, None],
+    max_depth=[5, 10, 15, None],
     min_samples_leaf=[1, 2, 3],
     random_state=[42],
     n_jobs=[8],

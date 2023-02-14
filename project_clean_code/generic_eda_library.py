@@ -57,8 +57,7 @@ class GenericEdaLibrary:
         self.log_path = 'logs'
         self.plot_style = 'darkgrid'
 
-    def import_data(self, input_file: str | None = None,
-                    index_col: int = 0) -> pd.DataFrame:
+    def import_data(self, input_file: str, index_col: int = 0) -> pd.DataFrame:
         """Import data from a csv file and returns a pandas dataframe.
 
         The input_path is defined in the class initialization, but can be
@@ -235,7 +234,7 @@ class GenericEdaLibrary:
 
     def perform_feature_engineering(
             self, data: pd.DataFrame, target: str,
-            feature_cols: list | None = None, **kwargs) -> tuple:
+            feature_cols: list = None, **kwargs) -> tuple:
         """Encode categorical features and perform a train test split.
 
         Parameters

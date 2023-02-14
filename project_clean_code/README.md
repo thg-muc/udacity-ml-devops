@@ -31,7 +31,7 @@ The following files are present in the root directory:
 
 ## Libraries
 
-The following libraries are used in this project in conjunction with Python 3.10.8:
+The following libraries are used in this project - they were tested with `Python 3.8 - 3.10`.
 
     - autopep8==2.0.0
     - joblib==1.2.0
@@ -46,6 +46,8 @@ The following libraries are used in this project in conjunction with Python 3.10
 Consider using a virtual environment and *requirements.txt* to install the libraries.
 
 ## Running Files
+
+Note: Each of the files will approximately take 2-10 minutes to run, depending on the hardware.
 
 a) To execute the main customer_churn workflow, consisting of EDA + Baseline Model training, run the following command inside the project directory:
 
