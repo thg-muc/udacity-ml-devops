@@ -1,0 +1,7 @@
+root - ERROR - Testing divide_vals: The type needs to be float and denominator cannot be 0.
+root - INFO - Testing divide_vals: SUCCESS
+root - INFO - Testing divide_vals: SUCCESS
+root - ERROR - Testing divide_vals: The type needs to be float and denominator cannot be 0.
+root - ERROR - Testing num_words: The type needs to be a string
+root - INFO - Testing num_words: SUCCESS
+root - INFO - Testing num_words: SUCCESS
