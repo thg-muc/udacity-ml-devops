@@ -171,8 +171,9 @@ def test_perform_feature_engineering(train_test_data: tuple) -> None:
 def test_train_models(cls: ChurnLibrary, train_test_data: tuple) -> None:
     """Test the train_models function."""
     try:
+        # Invoke train models, using a simpler test_grid for quicker testing
         cls.train_models(
-            train_test_data, grid_dicts=constants.GRID_DICTS)
+            train_test_data, grid_dicts=constants.TEST_GRID_DICTS)
 
         # Assert that the results_dict was initialized
         assert cls.results_dict is not None
