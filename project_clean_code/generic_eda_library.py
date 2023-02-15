@@ -295,12 +295,10 @@ class GenericEdaLibrary:
         logging.debug('Encoding categorical columns: %s', cat_cols)
         # Iterate over the categorical columns
         for cat in cat_cols:
+            new_col = cat + f'_{target}'
             # Get the target proportion for each category
-            cat_means = data.groupby(cat)[target].mean(numeric_only=True)
-            # Iterate over the means, add value per group and add a new column
-            for cat_mean_group in cat_means.index:
-                data.loc[data[cat] == cat_mean_group,
-                         cat + f'_{target}'] = cat_means[cat_mean_group]
+            data[new_col] = data.groupby(cat)[target].transform(
+                'mean', numeric_only=True)
         # Drop the original categorical columns if not requested
         if not keep_original:
             data = data.drop(cat_cols, axis=1, errors='ignore')

@@ -47,13 +47,13 @@ Consider using a virtual environment and *requirements.txt* to install the libra
 
 ## Running Files
 
-Note: Each of the files will approximately take 2-10 minutes to run, depending on the hardware.
-
 a) To execute the main customer_churn workflow, consisting of EDA + Baseline Model training, run the following command inside the project directory:
 
     python churn_library.py
 
 → The EDA and Baseline Model training results are persisted to disk in the `images` and `models` folder. A result log - containing additional textual information -  will be created in `logs\churn_library.log`.
+
+Note: This file takes about 2-10 minutes to run, depending on the hardware.
 
 b) To execute the logging and testing workflow, run the following command:
 
@@ -62,3 +62,5 @@ b) To execute the logging and testing workflow, run the following command:
 → This executes all pytest-tests for the churn_library by invoking all public methods from the classes. The test results are logged to the console and to the file `logs\pytest.log` - the pytest logging configuration is set in the `pyproject.toml` file. This logfile only contains the test results, so it is not redundant to the primary logfile.
 
 By running the functions of the churn_library, the EDA and Baseline Model training results are also persisted to disk in the `images` and `models` folder. Please note that on order to evaluate that the expected results were created, these folders and their contents are deleted before the tests are executed.
+
+Note: This file uses a simpler grid to for model training to speed up testing - it takes about 1-2 minutes to run, depending on the hardware.

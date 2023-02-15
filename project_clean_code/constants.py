@@ -84,3 +84,38 @@ GRID_DICTS = dict(
     rfc=RF_GRID_SEARCH_PARAMS,
     lrc=LR_GRID_SEARCH_PARAMS
 )
+
+#######################################
+# Testing parameters for pytest
+
+# Test: Define the RF Grid Search
+TEST_RF_GRID_SEARCH_PARAMS = dict(
+    criterion=['gini'],
+    max_depth=[5, 15],
+    min_samples_leaf=[1, 2],
+    random_state=[42],
+    n_jobs=[8],
+)
+
+# Test: Define the LogisticRegression Grid Search
+TEST_LR_GRID_SEARCH_PARAMS = [
+    dict(
+        solver=['liblinear'],
+        penalty=['l1', 'l2'],
+        max_iter=[3000],
+        random_state=[42],
+    ),
+    dict(
+        solver=['lbfgs'],
+        penalty=['l2'],
+        max_iter=[3000],
+        random_state=[42],
+        n_jobs=[8],
+    ),
+]
+
+# Test: Create a combined Grid Dict
+TEST_GRID_DICTS = dict(
+    rfc=TEST_RF_GRID_SEARCH_PARAMS,
+    lrc=TEST_LR_GRID_SEARCH_PARAMS
+)
