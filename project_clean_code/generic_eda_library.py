@@ -1,8 +1,4 @@
-"""Generic Module for performing basic EDA and baseline model tasks.
-
-This is part of the Udacity ML Devops Nanodegree (Project 1),
-however it is written in a generic way to be used for other projects as well.
-"""
+"""Generic Module for performing basic EDA and baseline model tasks."""
 
 # * Author  : Thomas Glanzer
 # * Created : February 2023
